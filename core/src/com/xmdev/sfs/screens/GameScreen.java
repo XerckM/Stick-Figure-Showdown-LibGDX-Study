@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.xmdev.sfs.SFS;
 import com.xmdev.sfs.resources.Assets;
+import com.xmdev.sfs.resources.GlobalVariables;
 
 public class GameScreen implements Screen {
 
@@ -21,7 +22,7 @@ public class GameScreen implements Screen {
         this.game = game;
 
         // set up the camera
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera = new OrthographicCamera(GlobalVariables.WORLD_WIDTH, GlobalVariables.WORLD_HEIGHT);
         camera.translate(camera.viewportWidth / 2f, camera.viewportHeight / 2f);
         camera.update();
 
@@ -51,7 +52,10 @@ public class GameScreen implements Screen {
         game.batch.begin();
 
         // draw the background
-        game.batch.draw(backgroundTexture, 0, 0, backgroundTexture.getWidth() * 0.5f, backgroundTexture.getHeight() * 0.5f);
+        game.batch.draw(
+                backgroundTexture, 0, 0,
+                backgroundTexture.getWidth() * GlobalVariables.WORLD_SCALE,
+                backgroundTexture.getHeight() * GlobalVariables.WORLD_SCALE);
 
         // end drawing
         game.batch.end();
