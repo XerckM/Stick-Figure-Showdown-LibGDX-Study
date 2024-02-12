@@ -1,8 +1,14 @@
 package com.xmdev.sfs.resources;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 
 public class Assets {
     // Asset manager
@@ -42,6 +48,7 @@ public class Assets {
     public void load() {
         // load all assets
         loadGameplayAssets();
+        loadFonts();
     }
 
     private void loadGameplayAssets() {
@@ -57,6 +64,32 @@ public class Assets {
         manager.load(LOSE_SPRITE_SHEET, Texture.class);
         manager.load(GAMEPLAY_BUTTONS_ATLAS, TextureAtlas.class);
         manager.load(BLOOD_ATLAS, TextureAtlas.class);
+    }
+
+    private void loadFonts() {
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+        manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+
+        // load the small font
+        FreetypeFontLoader.FreeTypeFontLoaderParameter smallFont = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        smallFont.fontFileName = ROBOTO_REGULAR;
+        smallFont.fontParameters.size = 32;
+        manager.load(SMALL_FONT, BitmapFont.class, smallFont);
+
+        // load the medium font
+        FreetypeFontLoader.FreeTypeFontLoaderParameter mediumFont = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        mediumFont.fontFileName = ROBOTO_REGULAR;
+        mediumFont.fontParameters.size = 106;
+        mediumFont.fontParameters.borderWidth = 4;
+        manager.load(MEDIUM_FONT, BitmapFont.class, mediumFont);
+
+        // load the large font
+        FreetypeFontLoader.FreeTypeFontLoaderParameter largeFont = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        largeFont.fontFileName = ROBOTO_REGULAR;
+        largeFont.fontParameters.size = 150;
+        largeFont.fontParameters.borderWidth = 6;
+        manager.load(LARGE_FONT, BitmapFont.class, largeFont);
     }
 
     // dispose in memory
