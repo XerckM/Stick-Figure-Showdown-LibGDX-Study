@@ -19,4 +19,23 @@ public class Assets {
     public static final String LOSE_SPRITE_SHEET = "sprites/LoseSpriteSheet.png";
     public static final String GAMEPLAY_BUTTONS_ATLAS = "textures/GameplayButtons.atlas";
     public static final String BLOOD_ATLAS = "textures/Blood.atlas";
+
+    // Fonts
+    public static final String ROBOTO_REGULAR = "fonts/Roboto-Regular.ttf";
+    public static final String SMALL_FONT = "smallFont.ttf";
+    public static final String MEDIUM_FONT = "mediumFont.ttf";
+    public static final String LARGE_FONT = "largeFont.ttf";
+
+    // Audio assets
+    public static final String BLOCK_SOUND = "audio/block.mp3";
+    public static final String BOO_SOUND = "audio/boo.mp3";
+    public static final String CHEER_SOUND = "audio/cheer.mp3";
+    public static final String CLICK_SOUND = "audio/click.mp3";
+    public static final String HIT_SOUND = "audio/hit.mp3";
+    public static final String MUSIC = "audio/music.ogg";
+
+    // Menu assets
+    public static final String MENU_ITEMS_ATLAS = "textures/MenuItems.atlas";
+
+
 }
