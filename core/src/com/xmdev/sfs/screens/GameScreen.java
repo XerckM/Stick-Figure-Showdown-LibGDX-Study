@@ -1,14 +1,18 @@
 package com.xmdev.sfs.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, InputProcessor {
 
     private final SFS game;
     private final ExtendViewport viewport;
@@ -16,6 +20,11 @@ public class GameScreen implements Screen {
     // background/ring
     private Texture backgroundTexture;
     private Texture frontRopesTexture;
+    private static final float RING_MIN_X = 7f;
+    private static final float RING_MAX_X = 60f;
+    private static final float RING_MIN_Y = 4f;
+    private static final float RING_MAX_Y = 22f;
+    private static final float RING_SLOPE = 3.16f;
 
     // fighters
     private static final float PLAYER_START_POSITION_X = 16f;
@@ -49,7 +58,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-
+        // process user input
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -75,13 +85,32 @@ public class GameScreen implements Screen {
         // draw the fighters
         renderFighters();
 
+        // draw the front ropes
+        game.batch.draw(
+                frontRopesTexture, 0, 0,
+                frontRopesTexture.getWidth() * GlobalVariables.WORLD_SCALE,
+                frontRopesTexture.getHeight() * GlobalVariables.WORLD_SCALE
+        );
+
         // end drawing
         game.batch.end();
     }
 
     private void renderFighters() {
-        game.player.render(game.batch);
-        game.opponent.render(game.batch);
+        // use the y coordinates of the fighter's position to determine which fighter to draw first
+        if (game.player.getPosition().y > game.opponent.getPosition().y) {
+            // draw player
+            game.player.render(game.batch);
+
+            // draw opponent
+            game.opponent.render(game.batch);
+        } else {
+            // draw opponent
+            game.opponent.render(game.batch);
+
+            // draw player
+            game.player.render(game.batch);
+        }
     }
 
     private void update(float deltaTime) {
@@ -95,6 +124,24 @@ public class GameScreen implements Screen {
         } else {
             game.player.faceLeft();
             game.opponent.faceRight();
+        }
+
+        // keep the fighters within the bounds of the ring
+        keepWithinRingBounds(game.player.getPosition());
+        keepWithinRingBounds(game.opponent.getPosition());
+    }
+
+    private void keepWithinRingBounds(Vector2 position) {
+        if (position.y < RING_MIN_Y) {
+            position.y = RING_MIN_Y;
+        } else if (position.y > RING_MAX_Y) {
+            position.y = RING_MAX_Y;
+        }
+
+        if (position.x < position.y / RING_SLOPE + RING_MIN_X) {
+            position.x = position.y / RING_SLOPE + RING_MIN_X;
+        } else if (position.x > position.y / -RING_SLOPE + RING_MAX_X) {
+            position.x = position.y / -RING_SLOPE + RING_MAX_X;
         }
     }
 
@@ -122,5 +169,76 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // check if player has pressed a movement key
+        if (keycode == Input.Keys.LEFT) {
+            game.player.moveLeft();
+        } else if (keycode == Input.Keys.RIGHT) {
+            game.player.moveRight();
+        }
+
+        if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+            game.player.moveUp();
+        } else if (keycode == Input.Keys.DOWN) {
+            game.player.moveDown();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        // if player has release a movement key, stop moving in that direction
+        if (keycode == Input.Keys.LEFT) {
+            game.player.stopMovingLeft();
+        } else if (keycode == Input.Keys.RIGHT) {
+            game.player.stopMovingRight();
+        }
+
+        if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+            game.player.stopMovingUp();
+        } else if (keycode == Input.Keys.DOWN) {
+            game.player.stopMovingDown();
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        return false;
     }
 }
