@@ -1,13 +1,17 @@
 package com.xmdev.sfs;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.xmdev.sfs.resources.Assets;
+import com.xmdev.sfs.screens.GameScreen;
 
-public class SFS extends ApplicationAdapter {
+public class SFS extends Game {
 	public SpriteBatch batch;
 	public Assets assets;
+
+	// screens
+	public GameScreen gameScreen;
 	
 	@Override
 	public void create () {
@@ -17,13 +21,15 @@ public class SFS extends ApplicationAdapter {
 		// Load all assets
 		assets.load();
 		assets.manager.finishLoading();
+
+		// initialize game screen and switch to it
+		gameScreen = new GameScreen(this);
+		setScreen(gameScreen);
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.end();
+		super.render();
 	}
 	
 	@Override
