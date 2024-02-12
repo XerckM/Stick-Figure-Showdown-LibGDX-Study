@@ -38,4 +38,4 @@ This project is licensed under the MIT License.
 ## Acknowledgements
 - [LibGDX](https://libgdx.com/) - The powerful game development framework that makes this project possible.
 - Udemy course - [Game Development Kickstart](https://www.udemy.com/course/game-dev-kickstart/)
-  - Author: [Brandon Grant](https://www.udemy.com/user/brandon-grant-3/)
+  - Author: [Brandon Grant](https://www.udemy.com/user/brandon-grant-7/)
