@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
+import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
 
@@ -30,6 +31,8 @@ public class GameScreen implements Screen, InputProcessor {
     private static final float PLAYER_START_POSITION_X = 16f;
     private static final float OPPONENT_START_POSITION_X = 51f;
     private static final float FIGHTER_START_POSITION_Y = 15f;
+    private static final float FIGHTER_CONTACT_DISTANCE_X = 7.5f;
+    private static final float FIGHTER_CONTACT_DISTANCE_Y = 1.5f;
 
     public GameScreen(SFS game) {
         this.game = game;
@@ -129,6 +132,24 @@ public class GameScreen implements Screen, InputProcessor {
         // keep the fighters within the bounds of the ring
         keepWithinRingBounds(game.player.getPosition());
         keepWithinRingBounds(game.opponent.getPosition());
+
+        // check if the fighters are within contact distance
+        if (areWithingContactDistance(game.player.getPosition(), game.opponent.getPosition())) {
+            // check if the fighters are attacking
+            if (game.player.isAttackActive()) {
+                // if the fighters are within contact distance and player is actively attacking, opponent hit
+                game.opponent.getHit(Fighter.HIT_STRENGTH);
+
+                // deactivate player's attack
+                game.player.makeContact();
+
+                // check if opponent has lost
+                if (game.opponent.hasLost()) {
+                    // if opponent has lost, player wins
+                    game.player.win();
+                }
+            }
+        }
     }
 
     private void keepWithinRingBounds(Vector2 position) {
@@ -143,6 +164,12 @@ public class GameScreen implements Screen, InputProcessor {
         } else if (position.x > position.y / -RING_SLOPE + RING_MAX_X) {
             position.x = position.y / -RING_SLOPE + RING_MAX_X;
         }
+    }
+
+    private boolean areWithingContactDistance(Vector2 position1, Vector2 position2) {
+        // determine if the positions are within the distance in which contact is possible
+        return Math.abs(position1.x - position2.x) <= FIGHTER_CONTACT_DISTANCE_X
+                && Math.abs(position1.y - position2.y) <= FIGHTER_CONTACT_DISTANCE_Y;
     }
 
     @Override

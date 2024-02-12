@@ -22,7 +22,7 @@ public class Fighter {
     public static final float MAX_LIFE = 100f;
 
     // amount of damage a fighter's hit will inflict
-    public static final float HIT_DAMAGE = 5f;
+    public static final float HIT_STRENGTH = 5f;
 
     // factor to decrease damage if a fighter gets hit while blocking
     public static final float BLOCK_DAMAGE_FACTOR = 0.2f;
@@ -80,6 +80,10 @@ public class Fighter {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public float getLife() {
+        return life;
     }
 
     public void getReady(float positionX, float positionY) {
@@ -149,7 +153,8 @@ public class Fighter {
             position.x += movementDirection.x * MOVEMENT_SPEED * deltaTime;
             position.y += movementDirection.y * MOVEMENT_SPEED * deltaTime;
         } else if ((state == State.PUNCH && punchAnimation.isAnimationFinished(stateTime)) ||
-                (state == State.KICK && kickAnimation.isAnimationFinished(stateTime))) {
+                (state == State.KICK && kickAnimation.isAnimationFinished(stateTime)) ||
+                (state == State.HURT && hurtAnimation.isAnimationFinished(stateTime))) {
             // if animation has finished and movement direction is set, start walking otherwise, go back to idle
             if (movementDirection.x != 0 || movementDirection.y != 0) {
                 changeState(State.WALK);
@@ -247,16 +252,73 @@ public class Fighter {
         if (state == State.IDLE || state == State.WALK) {
             changeState(State.PUNCH);
         }
+
+        // just started attacking, so no contact has been made yet
+        madeContact = false;
     }
 
     public void kick() {
         if (state == State.IDLE || state == State.WALK) {
             changeState(State.KICK);
         }
+
+        // just started attacking, so no contact has been made yet
+        madeContact = false;
+    }
+
+    public void makeContact() {
+        madeContact = true;
+    }
+
+    public boolean hasMadeContact() {
+        return madeContact;
     }
 
     public boolean isAttacking() {
         return state == State.PUNCH || state == State.KICK;
+    }
+
+    public boolean isAttackActive() {
+        // the attack is active if the fighter has not made contact and attack animation not started
+        // or almost finished
+        if (hasMadeContact()) {
+            return false;
+        } else if (state == State.PUNCH) {
+            return stateTime > punchAnimation.getFrameDuration() * 0.33f &&
+                    stateTime < punchAnimation.getAnimationDuration() * 0.66f;
+        } else if (state == State.KICK) {
+            return stateTime > kickAnimation.getFrameDuration() * 0.33f &&
+                    stateTime < kickAnimation.getAnimationDuration() * 0.66f;
+        } else {
+            return false;
+        }
+    }
+
+    public void getHit(float damage) {
+        if (state == State.HURT || state == State.WIN || state == State.LOSE) return;
+
+        // reduce fighter's life by the full damage amount or fraction if the fighter is blocking
+        life -= state == State.BLOCK ? damage * BLOCK_DAMAGE_FACTOR : damage;
+        if (life <= 0f) {
+            // if no life remains, lose
+            lose();
+        }  else if (state != State.BLOCK) {
+            // if the fighter is not blocking, get hurt
+            changeState(State.HURT);
+        }
+    }
+
+    public void lose() {
+        changeState(State.LOSE);
+        life = 0f;
+    }
+
+    public boolean hasLost() {
+        return state == State.LOSE;
+    }
+
+    public void win() {
+        changeState(State.WIN);
     }
 
     private void initializeBlockAnimation(AssetManager assetManager) {
