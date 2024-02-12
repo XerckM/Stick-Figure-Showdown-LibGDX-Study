@@ -1,6 +1,8 @@
 package com.xmdev.sfs.resources;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class Assets {
     // Asset manager
@@ -37,5 +39,24 @@ public class Assets {
     // Menu assets
     public static final String MENU_ITEMS_ATLAS = "textures/MenuItems.atlas";
 
+    public void load() {
+        // load all assets
+        loadGameplayAssets();
+    }
+
+    private void loadGameplayAssets() {
+        manager.load(BACKGROUND_TEXTURE, Texture.class);
+        manager.load(FRONT_ROPES_TEXTURE, Texture.class);
+        manager.load(IDLE_SPRITE_SHEET, Texture.class);
+        manager.load(WALK_SPRITE_SHEET, Texture.class);
+        manager.load(PUNCH_SPRITE_SHEET, Texture.class);
+        manager.load(KICK_SPRITE_SHEET, Texture.class);
+        manager.load(HURT_SPRITE_SHEET, Texture.class);
+        manager.load(BLOCK_SPRITE_SHEET, Texture.class);
+        manager.load(WIN_SPRITE_SHEET, Texture.class);
+        manager.load(LOSE_SPRITE_SHEET, Texture.class);
+        manager.load(GAMEPLAY_BUTTONS_ATLAS, TextureAtlas.class);
+        manager.load(BLOOD_ATLAS, TextureAtlas.class);
+    }
 
 }
