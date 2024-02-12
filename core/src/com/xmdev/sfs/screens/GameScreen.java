@@ -1,10 +1,9 @@
 package com.xmdev.sfs.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
@@ -12,7 +11,7 @@ import com.xmdev.sfs.resources.GlobalVariables;
 public class GameScreen implements Screen {
 
     private final SFS game;
-    private final OrthographicCamera camera;
+    private final ExtendViewport viewport;
 
     // background/ring
     private Texture backgroundTexture;
@@ -21,10 +20,13 @@ public class GameScreen implements Screen {
     public GameScreen(SFS game) {
         this.game = game;
 
-        // set up the camera
-        camera = new OrthographicCamera(GlobalVariables.WORLD_WIDTH, GlobalVariables.WORLD_HEIGHT);
-        camera.translate(camera.viewportWidth / 2f, camera.viewportHeight / 2f);
-        camera.update();
+        // set up the viewport
+        viewport = new ExtendViewport(
+                GlobalVariables.WORLD_WIDTH,
+                GlobalVariables.MIN_WORLD_HEIGHT,
+                GlobalVariables.WORLD_WIDTH,
+                0
+        );
 
         // create the game area
         createGameArea();
@@ -46,7 +48,7 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
 
         // set the sprite batch to use the camera
-        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.setProjectionMatrix(viewport.getCamera().combined);
 
         // begin drawing
         game.batch.begin();
@@ -63,7 +65,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        // update viewport with new screen size
+        viewport.update(width, height, true);
     }
 
     @Override

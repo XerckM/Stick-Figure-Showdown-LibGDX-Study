@@ -8,5 +8,6 @@ public class GlobalVariables {
     // world
     public static final float WORLD_WIDTH = 80f;
     public static final float WORLD_HEIGHT = 48f;
+    public static final float MIN_WORLD_HEIGHT = WORLD_HEIGHT * 0.85f;
     public static final float WORLD_SCALE = 0.05f;
 }
