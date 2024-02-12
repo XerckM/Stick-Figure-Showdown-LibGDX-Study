@@ -1,0 +1,34 @@
+
+GameplayButtons.png
+size: 1024, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+ContinueButton
+  rotate: false
+  xy: 2, 2
+  size: 611, 145
+  orig: 611, 145
+  offset: 0, 0
+  index: -1
+MainMenuButton
+  rotate: false
+  xy: 2, 149
+  size: 691, 144
+  orig: 691, 144
+  offset: 0, 0
+  index: -1
+PauseButton
+  rotate: false
+  xy: 695, 291
+  size: 149, 149
+  orig: 149, 149
+  offset: 0, 0
+  index: -1
+PlayAgainButton
+  rotate: false
+  xy: 2, 295
+  size: 691, 145
+  orig: 691, 145
+  offset: 0, 0
+  index: -1

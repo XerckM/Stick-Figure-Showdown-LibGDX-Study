@@ -1,0 +1,104 @@
+
+Blood.png
+size: 1024, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+BloodPool0
+  rotate: false
+  xy: 2, 184
+  size: 252, 63
+  orig: 252, 63
+  offset: 0, 0
+  index: -1
+BloodPool1
+  rotate: false
+  xy: 256, 184
+  size: 252, 63
+  orig: 252, 63
+  offset: 0, 0
+  index: -1
+BloodPool2
+  rotate: false
+  xy: 2, 119
+  size: 252, 63
+  orig: 252, 63
+  offset: 0, 0
+  index: -1
+BloodSplatter
+  rotate: false
+  xy: 2, 28
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 1
+BloodSplatter
+  rotate: false
+  xy: 125, 28
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 6
+BloodSplatter
+  rotate: false
+  xy: 256, 93
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 3
+BloodSplatter
+  rotate: false
+  xy: 379, 93
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 8
+BloodSplatter
+  rotate: false
+  xy: 510, 158
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 10
+BloodSplatter
+  rotate: false
+  xy: 633, 158
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 0
+BloodSplatter
+  rotate: false
+  xy: 756, 158
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 5
+BloodSplatter
+  rotate: false
+  xy: 879, 158
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 2
+BloodSplatter
+  rotate: false
+  xy: 248, 2
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 7
+BloodSplatter
+  rotate: false
+  xy: 371, 2
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 4
+BloodSplatter
+  rotate: false
+  xy: 502, 67
+  size: 121, 89
+  orig: 121, 89
+  offset: 0, 0
+  index: 9

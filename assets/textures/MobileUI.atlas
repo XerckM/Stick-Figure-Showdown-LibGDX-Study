@@ -1,0 +1,90 @@
+
+MobileUI.png
+size: 2048, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+BlockButton
+  rotate: false
+  xy: 862, 66
+  size: 149, 149
+  orig: 149, 149
+  offset: 0, 0
+  index: -1
+Joystick
+  rotate: false
+  xy: 217, 2
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickDown
+  rotate: false
+  xy: 647, 2
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickLeft
+  rotate: false
+  xy: 217, 217
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickLeftDown
+  rotate: false
+  xy: 2, 217
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickLeftUp
+  rotate: false
+  xy: 862, 217
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickRight
+  rotate: false
+  xy: 432, 217
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickRightDown
+  rotate: false
+  xy: 2, 2
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickRightUp
+  rotate: false
+  xy: 432, 2
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+JoystickUp
+  rotate: false
+  xy: 647, 217
+  size: 213, 213
+  orig: 213, 213
+  offset: 0, 0
+  index: -1
+KickButton
+  rotate: false
+  xy: 1077, 281
+  size: 149, 149
+  orig: 149, 149
+  offset: 0, 0
+  index: -1
+PunchButton
+  rotate: false
+  xy: 1228, 281
+  size: 149, 149
+  orig: 149, 149
+  offset: 0, 0
+  index: -1

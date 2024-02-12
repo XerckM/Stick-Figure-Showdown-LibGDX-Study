@@ -1,0 +1,195 @@
+
+MenuItems.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+BackButton
+  rotate: false
+  xy: 1348, 1160
+  size: 161, 161
+  orig: 161, 161
+  offset: 0, 0
+  index: -1
+BackButtonDown
+  rotate: false
+  xy: 578, 1077
+  size: 161, 161
+  orig: 161, 161
+  offset: 0, 0
+  index: -1
+BloodSettingBackground
+  rotate: false
+  xy: 889, 1609
+  size: 486, 141
+  orig: 486, 141
+  offset: 0, 0
+  index: -1
+BloodSettingBackgroundLong
+  rotate: false
+  xy: 2, 1752
+  size: 1371, 141
+  orig: 1371, 141
+  offset: 0, 0
+  index: -1
+CheckButtonOff
+  rotate: false
+  xy: 848, 1100
+  size: 105, 116
+  orig: 105, 116
+  offset: 0, 0
+  index: -1
+CheckButtonOn
+  rotate: false
+  xy: 741, 1100
+  size: 105, 116
+  orig: 105, 116
+  offset: 0, 0
+  index: -1
+DifficultySettingBackground
+  rotate: false
+  xy: 2, 1895
+  size: 1371, 141
+  orig: 1371, 141
+  offset: 0, 0
+  index: -1
+Easy
+  rotate: false
+  xy: 2, 2
+  size: 393, 88
+  orig: 393, 88
+  offset: 0, 0
+  index: -1
+FighterDisplay
+  rotate: false
+  xy: 578, 1240
+  size: 184, 198
+  orig: 184, 198
+  offset: 0, 0
+  index: -1
+FighterDisplayBackground
+  rotate: false
+  xy: 2, 1064
+  size: 574, 374
+  orig: 574, 374
+  offset: 0, 0
+  index: -1
+FullScreenSettingBackground
+  rotate: false
+  xy: 2, 1609
+  size: 885, 141
+  orig: 885, 141
+  offset: 0, 0
+  index: -1
+Hard
+  rotate: false
+  xy: 397, 2
+  size: 393, 88
+  orig: 393, 88
+  offset: 0, 0
+  index: -1
+Logo
+  rotate: false
+  xy: 1375, 1764
+  size: 573, 272
+  orig: 573, 272
+  offset: 0, 0
+  index: -1
+Medium
+  rotate: false
+  xy: 1377, 1674
+  size: 393, 88
+  orig: 393, 88
+  offset: 0, 0
+  index: -1
+MusicSettingBackground
+  rotate: false
+  xy: 804, 1466
+  size: 645, 141
+  orig: 645, 141
+  offset: 0, 0
+  index: -1
+PlayGameButton
+  rotate: false
+  xy: 2, 416
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+PlayGameButtonDown
+  rotate: false
+  xy: 2, 92
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+QuitGameButton
+  rotate: false
+  xy: 2, 902
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+QuitGameButtonDown
+  rotate: false
+  xy: 2, 740
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+Settings
+  rotate: false
+  xy: 2, 1440
+  size: 800, 167
+  orig: 800, 167
+  offset: 0, 0
+  index: -1
+SettingsButton
+  rotate: false
+  xy: 2, 254
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+SettingsButtonDown
+  rotate: false
+  xy: 2, 578
+  size: 741, 160
+  orig: 741, 160
+  offset: 0, 0
+  index: -1
+SoundsSettingBackground
+  rotate: false
+  xy: 804, 1323
+  size: 727, 141
+  orig: 727, 141
+  offset: 0, 0
+  index: -1
+ToggleButtonOff
+  rotate: false
+  xy: 1056, 1218
+  size: 290, 103
+  orig: 290, 103
+  offset: 0, 0
+  index: -1
+ToggleButtonOn
+  rotate: false
+  xy: 764, 1218
+  size: 290, 103
+  orig: 290, 103
+  offset: 0, 0
+  index: -1
+TriangleButton
+  rotate: false
+  xy: 1950, 1933
+  size: 77, 103
+  orig: 77, 103
+  offset: 0, 0
+  index: -1
+TriangleButtonDown
+  rotate: false
+  xy: 955, 1113
+  size: 77, 103
+  orig: 77, 103
+  offset: 0, 0
+  index: -1

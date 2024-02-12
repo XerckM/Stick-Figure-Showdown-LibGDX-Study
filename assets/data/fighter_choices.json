@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Slim Stallone",
+    "colorValues": [
+      1,
+      0.2,
+      0.2
+    ]
+  },
+  {
+    "name": "Thin Diesel",
+    "colorValues": [
+      0.25,
+      0.7,
+      1
+    ]
+  },
+  {
+    "name": "Lean Johnson",
+    "colorValues": [
+      0.98,
+      0.65,
+      0.25
+    ]
+  },
+  {
+    "name": "Vic Narrow",
+    "colorValues": [
+      0.76,
+      0.49,
+      0.96
+    ]
+  }
+]
