@@ -59,4 +59,9 @@ public class Assets {
         manager.load(BLOOD_ATLAS, TextureAtlas.class);
     }
 
+    // dispose in memory
+    public void dispose() {
+        manager.dispose();
+    }
+
 }
