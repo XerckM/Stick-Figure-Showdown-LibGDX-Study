@@ -174,16 +174,25 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         // check if player has pressed a movement key
-        if (keycode == Input.Keys.LEFT) {
+        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
             game.player.moveLeft();
-        } else if (keycode == Input.Keys.RIGHT) {
+        } else if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
             game.player.moveRight();
         }
 
         if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
             game.player.moveUp();
-        } else if (keycode == Input.Keys.DOWN) {
+        } else if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
             game.player.moveDown();
+        }
+
+        // check if the player has pressed a block or attack key
+        if (keycode == Input.Keys.L) {
+            game.player.block();
+        } else if (keycode == Input.Keys.J) {
+            game.player.punch();
+        } else if (keycode == Input.Keys.K) {
+            game.player.kick();
         }
 
         return false;
@@ -192,16 +201,21 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         // if player has release a movement key, stop moving in that direction
-        if (keycode == Input.Keys.LEFT) {
+        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
             game.player.stopMovingLeft();
-        } else if (keycode == Input.Keys.RIGHT) {
+        } else if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
             game.player.stopMovingRight();
         }
 
         if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
             game.player.stopMovingUp();
-        } else if (keycode == Input.Keys.DOWN) {
+        } else if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
             game.player.stopMovingDown();
+        }
+
+        // if player has released a block key, stop attacking
+        if (keycode == Input.Keys.L) {
+            game.player.stopBlocking();
         }
 
         return true;
