@@ -3,7 +3,6 @@ package com.xmdev.sfs;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.screens.GameScreen;
@@ -28,8 +27,8 @@ public class SFS extends Game {
 		assets.manager.finishLoading();
 
 		// initialize the fighters
-		player = new Fighter(this, "Slim Stalone", new Color(1f, 0.2f, 0.2f, 1f));
-		opponent = new Fighter(this, "Fat Stalone", new Color(0.25f, 0.7f, 1f, 1f));
+		player = new Fighter(this, "Slim Stallone", new Color(1f, 0.2f, 0.2f, 1f));
+		opponent = new Fighter(this, "Fat Stallone", new Color(0.25f, 0.7f, 1f, 1f));
 
 		// initialize game screen and switch to it
 		gameScreen = new GameScreen(this);
