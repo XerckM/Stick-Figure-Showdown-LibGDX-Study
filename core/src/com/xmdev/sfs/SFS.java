@@ -3,12 +3,14 @@ package com.xmdev.sfs;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.screens.GameScreen;
 
 public class SFS extends Game {
 	public SpriteBatch batch;
+	public ShapeRenderer shapeRenderer;
 	public Assets assets;
 
 	// screens
@@ -20,6 +22,7 @@ public class SFS extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 		assets = new Assets();
 
 		// Load all assets
@@ -43,6 +46,7 @@ public class SFS extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
+		shapeRenderer.dispose();
 		assets.dispose();
 	}
 }

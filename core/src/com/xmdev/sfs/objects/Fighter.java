@@ -78,6 +78,22 @@ public class Fighter {
         initializeWinAnimation(game.assets.manager);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public Vector2 getPosition() {
         return position;
     }

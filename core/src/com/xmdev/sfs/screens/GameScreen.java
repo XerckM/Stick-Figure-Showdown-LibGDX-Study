@@ -4,8 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
@@ -13,10 +17,28 @@ import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
 
+import java.util.Locale;
+
 public class GameScreen implements Screen, InputProcessor {
 
     private final SFS game;
     private final ExtendViewport viewport;
+
+    // game
+    private GlobalVariables.Difficulty difficulty = GlobalVariables.Difficulty.EASY;
+
+    // rounds
+    private int roundsWon = 0, roundsLost = 0;
+    private static final float MAX_ROUND_TIME = 99.99f;
+    private float roundTimer = MAX_ROUND_TIME;
+
+    // fonts
+    private BitmapFont smallFont, mediumFont, largeFont;
+    private static final Color DEFAULT_FONT_COLOR = Color.WHITE;
+
+    // HUD
+    private static final Color HEALTH_BAR_COLOR = Color.RED;
+    private static final Color HEALTH_BAR_BACKGROUND_COLOR = GlobalVariables.GOLD;
 
     // background/ring
     private Texture backgroundTexture;
@@ -48,6 +70,9 @@ public class GameScreen implements Screen, InputProcessor {
         // create the game area
         createGameArea();
 
+        // setup the fonts
+        setUpFonts();
+
         // get the fighters ready
         game.player.getReady(PLAYER_START_POSITION_X, FIGHTER_START_POSITION_Y);
         game.opponent.getReady(OPPONENT_START_POSITION_X, FIGHTER_START_POSITION_Y);
@@ -57,6 +82,23 @@ public class GameScreen implements Screen, InputProcessor {
         // get ring textures from asset manager
         backgroundTexture = game.assets.manager.get(Assets.BACKGROUND_TEXTURE);
         frontRopesTexture = game.assets.manager.get(Assets.FRONT_ROPES_TEXTURE);
+    }
+
+    private void setUpFonts() {
+        smallFont = game.assets.manager.get(Assets.SMALL_FONT);
+        smallFont.getData().setScale(GlobalVariables.WORLD_SCALE);
+        smallFont.setColor(DEFAULT_FONT_COLOR);
+        smallFont.setUseIntegerPositions(false);
+
+        mediumFont = game.assets.manager.get(Assets.MEDIUM_FONT);
+        mediumFont.getData().setScale(GlobalVariables.WORLD_SCALE);
+        mediumFont.setColor(DEFAULT_FONT_COLOR);
+        mediumFont.setUseIntegerPositions(false);
+
+        largeFont = game.assets.manager.get(Assets.LARGE_FONT);
+        largeFont.getData().setScale(GlobalVariables.WORLD_SCALE);
+        largeFont.setColor(DEFAULT_FONT_COLOR);
+        largeFont.setUseIntegerPositions(false);
     }
 
     @Override
@@ -71,6 +113,10 @@ public class GameScreen implements Screen, InputProcessor {
 
         // update the game
         update(delta);
+
+        // set the sprite batch and the shape renderer to use the viewport camera
+        game.batch.setProjectionMatrix(viewport.getCamera().combined);
+        game.shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
 
         // set the sprite batch to use the camera
         game.batch.setProjectionMatrix(viewport.getCamera().combined);
@@ -95,6 +141,9 @@ public class GameScreen implements Screen, InputProcessor {
                 frontRopesTexture.getHeight() * GlobalVariables.WORLD_SCALE
         );
 
+        // draw the HUD
+        renderHUD();
+
         // end drawing
         game.batch.end();
     }
@@ -114,6 +163,104 @@ public class GameScreen implements Screen, InputProcessor {
             // draw player
             game.player.render(game.batch);
         }
+    }
+
+    private void renderHUD() {
+        float HUDMargin = 1f;
+
+        // draw the rounds won to lost ratio
+        smallFont.draw(
+                game.batch,
+                "WINS: " + roundsWon + " - " + roundsLost,
+                HUDMargin, viewport.getWorldHeight() - HUDMargin
+        );
+
+        // draw the difficulty setting
+        String text = "DIFFICULTY: ";
+        switch (difficulty) {
+            case EASY:
+                text += "EASY";
+                break;
+            case MEDIUM:
+                text += "MEDIUM";
+                break;
+            default:
+                text += "HARD";
+        }
+
+        smallFont.draw(
+                game.batch,
+                text,
+                viewport.getWorldWidth() - HUDMargin,
+                viewport.getWorldHeight() - HUDMargin,
+                0,
+                Align.right,
+                false
+        );
+
+        // setup layout sizes and positioning
+        float healthBarPadding = 0.5f;
+        float healthBarHeight = smallFont.getCapHeight() + healthBarPadding * 2f;
+        float healthBarMaxWidth = 32f;
+        float healthBarBackgroundPadding = 0.2f;
+        float healthBarBackgroundHeight = healthBarHeight + healthBarBackgroundPadding * 2f;
+        float healthBarBackgroundWidth = healthBarMaxWidth + healthBarBackgroundPadding * 2f;
+        float healthBarBackgroundMarginTop = 0.8f;
+        float healthBarBackgroundPositionY = viewport.getWorldHeight() - HUDMargin -
+                smallFont.getCapHeight() - healthBarBackgroundMarginTop - healthBarBackgroundHeight;
+        float healthBarPositionY = healthBarBackgroundPositionY + healthBarBackgroundPadding;
+        float fighterNamePositionY = healthBarPositionY + healthBarHeight - healthBarPadding;
+
+        game.batch.end();
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // draw the fighter health bar background rectangles
+        game.shapeRenderer.setColor(HEALTH_BAR_BACKGROUND_COLOR);
+        game.shapeRenderer.rect(
+                HUDMargin, healthBarBackgroundPositionY,
+                healthBarBackgroundWidth, healthBarBackgroundHeight
+        );
+        game.shapeRenderer.rect(
+                viewport.getWorldWidth() - HUDMargin - healthBarBackgroundWidth,
+                healthBarBackgroundPositionY, healthBarBackgroundWidth, healthBarBackgroundHeight
+        );
+
+        // draw the fighter's red health bar rectangles
+        game.shapeRenderer.setColor(HEALTH_BAR_COLOR);
+        float healthBarWidth = healthBarMaxWidth * game.player.getLife() / Fighter.MAX_LIFE;
+        game.shapeRenderer.rect(
+                HUDMargin + healthBarBackgroundPadding, healthBarPositionY,
+                healthBarWidth, healthBarHeight
+        );
+        healthBarWidth = healthBarMaxWidth * game.opponent.getLife() / Fighter.MAX_LIFE;
+        game.shapeRenderer.rect(
+                viewport.getWorldWidth() - HUDMargin - healthBarBackgroundPadding - healthBarWidth,
+                healthBarPositionY, healthBarWidth, healthBarHeight
+        );
+
+        game.shapeRenderer.end();
+        game.batch.begin();
+
+        // draw the fighter's names
+        smallFont.draw(
+                game.batch, game.player.getName(),
+                HUDMargin + healthBarBackgroundPadding + healthBarPadding,
+                fighterNamePositionY
+        );
+        smallFont.draw(
+                game.batch, game.opponent.getName(),
+                viewport.getWorldWidth() - HUDMargin - healthBarBackgroundPadding - healthBarPadding,
+                fighterNamePositionY,
+                0, Align.right, false
+        );
+
+        // draw the round timer
+        mediumFont.draw(
+                game.batch, String.format(Locale.getDefault(), "%02d", (int) roundTimer),
+                viewport.getWorldWidth() / 2f,
+                viewport.getWorldHeight() - HUDMargin,
+                0, Align.center, false
+        );
     }
 
     private void update(float deltaTime) {
