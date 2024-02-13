@@ -342,6 +342,7 @@ public class GameScreen implements Screen, InputProcessor {
         } else {
             // if round state time > half of start of delay, display fight text
             text = "FIGHT!";
+            mediumFont.setColor(Color.RED);
         }
 
         mediumFont.draw(
@@ -350,6 +351,8 @@ public class GameScreen implements Screen, InputProcessor {
                 viewport.getWorldHeight() / 2f,
                 0, Align.center, false
         );
+
+        mediumFont.setColor(DEFAULT_FONT_COLOR);
     }
 
     private void update(float deltaTime) {
