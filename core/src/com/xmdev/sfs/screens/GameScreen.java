@@ -320,9 +320,8 @@ public class GameScreen implements Screen, InputProcessor {
         // draw the round timer
         mediumFont.draw(
                 game.batch, String.format(Locale.getDefault(), "%02d", (int) roundTimer),
-                viewport.getWorldWidth() / 2f,
-                viewport.getWorldHeight() - HUDMargin,
-                0, Align.center, false
+                viewport.getWorldWidth() / 2f - mediumFont.getSpaceXadvance() * 2.3f,
+                viewport.getWorldHeight() - HUDMargin
         );
     }
 
