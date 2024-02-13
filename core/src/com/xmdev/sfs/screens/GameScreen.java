@@ -25,9 +25,22 @@ public class GameScreen implements Screen, InputProcessor {
     private final ExtendViewport viewport;
 
     // game
+    private enum GameState {
+        RUNNING, PAUSED, GAME_OVER
+    }
+    private GameState gameState;
     private GlobalVariables.Difficulty difficulty = GlobalVariables.Difficulty.EASY;
 
     // rounds
+    private enum RoundState {
+        STARTING, IN_PROGRESS, ENDING
+    }
+    private RoundState roundState;
+    private float roundStateTime;
+    private static final float START_ROUND_DELAY = 2f;
+    private static final float END_ROUND_DELAY = 2f;
+    private int currentRound;
+    private static final int MAX_ROUNDS = 3;
     private int roundsWon = 0, roundsLost = 0;
     private static final float MAX_ROUND_TIME = 99.99f;
     private float roundTimer = MAX_ROUND_TIME;
@@ -72,10 +85,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         // setup the fonts
         setUpFonts();
-
-        // get the fighters ready
-        game.player.getReady(PLAYER_START_POSITION_X, FIGHTER_START_POSITION_Y);
-        game.opponent.getReady(OPPONENT_START_POSITION_X, FIGHTER_START_POSITION_Y);
     }
 
     private void createGameArea() {
@@ -105,6 +114,55 @@ public class GameScreen implements Screen, InputProcessor {
     public void show() {
         // process user input
         Gdx.input.setInputProcessor(this);
+
+        // start the game
+        startGame();
+    }
+
+    private void startGame() {
+        gameState = GameState.RUNNING;
+        roundsWon = roundsLost = 0;
+
+        // start the first round
+        currentRound = 1;
+        startRound();
+    }
+
+    private void startRound() {
+        // get the fighters ready
+        game.player.getReady(PLAYER_START_POSITION_X, FIGHTER_START_POSITION_Y);
+        game.opponent.getReady(OPPONENT_START_POSITION_X, FIGHTER_START_POSITION_Y);
+
+        // start the round
+        roundState = RoundState.STARTING;
+        roundStateTime = 0f;
+        roundTimer = MAX_ROUND_TIME;
+    }
+
+    private void endRound() {
+        // end the round
+        roundState = RoundState.ENDING;
+        roundStateTime = 0f;
+    }
+
+    private void winRound() {
+        // players wins the round and opponent loses
+        game.player.win();
+        game.opponent.lose();
+        roundsWon++;
+
+        // end the round
+        endRound();
+    }
+
+    private void loseRound() {
+        // player loses the round and opponent wins
+        game.player.lose();
+        game.opponent.win();
+        roundsLost++;
+
+        // end the round
+        endRound();
     }
 
     @Override
@@ -143,6 +201,11 @@ public class GameScreen implements Screen, InputProcessor {
 
         // draw the HUD
         renderHUD();
+
+        // if round is starting, draw the start around the text
+        if (roundState == RoundState.STARTING) {
+            renderStartRoundText();
+        }
 
         // end drawing
         game.batch.end();
@@ -263,7 +326,45 @@ public class GameScreen implements Screen, InputProcessor {
         );
     }
 
+    // add text at the start of the round
+    private void renderStartRoundText() {
+        String text;
+        // check if round state time < half of start of delay, if so, display round number text
+        if (roundStateTime < START_ROUND_DELAY * 0.5f) {
+            text = "ROUND " + currentRound;
+        } else {
+            // if round state time > half of start of delay, display fight text
+            text = "FIGHT!";
+        }
+
+        mediumFont.draw(
+                game.batch, text,
+                viewport.getWorldWidth() / 2f,
+                viewport.getWorldHeight() / 2f,
+                0, Align.center, false
+        );
+    }
+
     private void update(float deltaTime) {
+        // update the round state
+        if (roundState == RoundState.STARTING && roundStateTime >= START_ROUND_DELAY) {
+            // if the start of the round delay has been reached, start the fight
+            roundState = RoundState.IN_PROGRESS;
+            roundStateTime = 0f;
+        } else if (roundState == RoundState.ENDING && roundStateTime >= END_ROUND_DELAY) {
+            // if the end round delay has been reached and player has won or lost more than half of the max rounds,
+            // end the game, otherwise, start the next round
+            if (roundsWon > MAX_ROUNDS / 2 || roundsLost > MAX_ROUNDS / 2) {
+                gameState = GameState.GAME_OVER;
+            } else {
+                currentRound++;
+                startRound();
+            }
+        } else {
+            // implement the rounds state time by delta time
+            roundStateTime += deltaTime;
+        }
+
         game.player.update(deltaTime);
         game.opponent.update(deltaTime);
 
@@ -280,20 +381,37 @@ public class GameScreen implements Screen, InputProcessor {
         keepWithinRingBounds(game.player.getPosition());
         keepWithinRingBounds(game.opponent.getPosition());
 
-        // check if the fighters are within contact distance
-        if (areWithingContactDistance(game.player.getPosition(), game.opponent.getPosition())) {
-            // check if the fighters are attacking
-            if (game.player.isAttackActive()) {
-                // if the fighters are within contact distance and player is actively attacking, opponent hit
-                game.opponent.getHit(Fighter.HIT_STRENGTH);
+        // check if round state is in progress, if so decrease round timer by delta time
+        if (roundState == RoundState.IN_PROGRESS) {
+            // if round is in progress, decrease the round timer by delta time
+            roundTimer -= deltaTime;
 
-                // deactivate player's attack
-                game.player.makeContact();
+            // check if round timer is finished, if so, neither of the fighters has won yet
+            // fighter with most life wins and other loses
+            // if both fighters have the same life, the player wins
+            if (roundTimer <= 0) {
+                if (game.player.getLife() >= game.opponent.getLife()) {
+                    winRound();
+                } else {
+                    loseRound();
+                }
+            }
 
-                // check if opponent has lost
-                if (game.opponent.hasLost()) {
-                    // if opponent has lost, player wins
-                    game.player.win();
+            // check if the fighters are within contact distance
+            if (areWithingContactDistance(game.player.getPosition(), game.opponent.getPosition())) {
+                // check if the fighters are attacking
+                if (game.player.isAttackActive()) {
+                    // if the fighters are within contact distance and player is actively attacking, opponent hit
+                    game.opponent.getHit(Fighter.HIT_STRENGTH);
+
+                    // deactivate player's attack
+                    game.player.makeContact();
+
+                    // check if opponent has lost
+                    if (game.opponent.hasLost()) {
+                        // if opponent has lost, player wins the round
+                        winRound();
+                    }
                 }
             }
         }
@@ -347,17 +465,19 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        // check if player has pressed a movement key
-        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
-            game.player.moveLeft();
-        } else if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
-            game.player.moveRight();
-        }
+        if (roundState == RoundState.IN_PROGRESS) {
+            // check if player has pressed a movement key
+            if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A) {
+                game.player.moveLeft();
+            } else if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D) {
+                game.player.moveRight();
+            }
 
-        if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
-            game.player.moveUp();
-        } else if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
-            game.player.moveDown();
+            if (keycode == Input.Keys.UP || keycode == Input.Keys.W) {
+                game.player.moveUp();
+            } else if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S) {
+                game.player.moveDown();
+            }
         }
 
         // check if the player has pressed a block or attack key
