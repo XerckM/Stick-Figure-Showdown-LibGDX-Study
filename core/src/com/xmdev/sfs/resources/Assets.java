@@ -2,6 +2,7 @@ package com.xmdev.sfs.resources;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -52,16 +53,20 @@ public class Assets {
     }
 
     private void loadGameplayAssets() {
-        manager.load(BACKGROUND_TEXTURE, Texture.class);
-        manager.load(FRONT_ROPES_TEXTURE, Texture.class);
-        manager.load(IDLE_SPRITE_SHEET, Texture.class);
-        manager.load(WALK_SPRITE_SHEET, Texture.class);
-        manager.load(PUNCH_SPRITE_SHEET, Texture.class);
-        manager.load(KICK_SPRITE_SHEET, Texture.class);
-        manager.load(HURT_SPRITE_SHEET, Texture.class);
-        manager.load(BLOCK_SPRITE_SHEET, Texture.class);
-        manager.load(WIN_SPRITE_SHEET, Texture.class);
-        manager.load(LOSE_SPRITE_SHEET, Texture.class);
+        TextureLoader.TextureParameter parameter = new TextureLoader.TextureParameter();
+        parameter.minFilter = Texture.TextureFilter.Linear;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+
+        manager.load(BACKGROUND_TEXTURE, Texture.class, parameter);
+        manager.load(FRONT_ROPES_TEXTURE, Texture.class, parameter);
+        manager.load(IDLE_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(WALK_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(PUNCH_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(KICK_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(HURT_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(BLOCK_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(WIN_SPRITE_SHEET, Texture.class, parameter);
+        manager.load(LOSE_SPRITE_SHEET, Texture.class, parameter);
         manager.load(GAMEPLAY_BUTTONS_ATLAS, TextureAtlas.class);
         manager.load(BLOOD_ATLAS, TextureAtlas.class);
     }
@@ -75,6 +80,8 @@ public class Assets {
         FreetypeFontLoader.FreeTypeFontLoaderParameter smallFont = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         smallFont.fontFileName = ROBOTO_REGULAR;
         smallFont.fontParameters.size = 32;
+        smallFont.fontParameters.minFilter = Texture.TextureFilter.Linear;
+        smallFont.fontParameters.magFilter = Texture.TextureFilter.Linear;
         manager.load(SMALL_FONT, BitmapFont.class, smallFont);
 
         // load the medium font
@@ -82,6 +89,8 @@ public class Assets {
         mediumFont.fontFileName = ROBOTO_REGULAR;
         mediumFont.fontParameters.size = 106;
         mediumFont.fontParameters.borderWidth = 4;
+        mediumFont.fontParameters.minFilter = Texture.TextureFilter.Linear;
+        mediumFont.fontParameters.magFilter = Texture.TextureFilter.Linear;
         manager.load(MEDIUM_FONT, BitmapFont.class, mediumFont);
 
         // load the large font
@@ -89,6 +98,8 @@ public class Assets {
         largeFont.fontFileName = ROBOTO_REGULAR;
         largeFont.fontParameters.size = 150;
         largeFont.fontParameters.borderWidth = 6;
+        largeFont.fontParameters.minFilter = Texture.TextureFilter.Linear;
+        largeFont.fontParameters.magFilter = Texture.TextureFilter.Linear;
         manager.load(LARGE_FONT, BitmapFont.class, largeFont);
     }
 
