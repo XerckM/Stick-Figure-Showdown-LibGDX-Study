@@ -5,8 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -72,6 +75,10 @@ public class GameScreen implements Screen, InputProcessor {
     private static final float FIGHTER_CONTACT_DISTANCE_X = 7.5f;
     private static final float FIGHTER_CONTACT_DISTANCE_Y = 1.5f;
 
+    // buttons
+    private Sprite playAgainButtonSprite;
+    private Sprite mainMenuButtonSprite;
+
     public GameScreen(SFS game) {
         this.game = game;
 
@@ -88,6 +95,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         // setup the fonts
         setUpFonts();
+
+        // create buttons
+        createButtons();
     }
 
     private void createGameArea() {
@@ -111,6 +121,25 @@ public class GameScreen implements Screen, InputProcessor {
         largeFont.getData().setScale(GlobalVariables.WORLD_SCALE);
         largeFont.setColor(DEFAULT_FONT_COLOR);
         largeFont.setUseIntegerPositions(false);
+    }
+
+    private void createButtons() {
+        // get the gameplay button texture atlas from the asset manager
+        TextureAtlas buttonTextureAtlas = game.assets.manager.get(Assets.GAMEPLAY_BUTTONS_ATLAS);
+
+        // create the play again button sprite
+        playAgainButtonSprite = new Sprite(buttonTextureAtlas.findRegion("PlayAgainButton"));
+        playAgainButtonSprite.setSize(
+                playAgainButtonSprite.getWidth() * GlobalVariables.WORLD_SCALE,
+                playAgainButtonSprite.getHeight() * GlobalVariables.WORLD_SCALE
+        );
+
+        // create main menu button sprite
+        mainMenuButtonSprite = new Sprite(buttonTextureAtlas.findRegion("MainMenuButton"));
+        mainMenuButtonSprite.setSize(
+                mainMenuButtonSprite.getWidth() * GlobalVariables.WORLD_SCALE,
+                mainMenuButtonSprite.getHeight() * GlobalVariables.WORLD_SCALE
+        );
     }
 
     @Override
@@ -205,9 +234,14 @@ public class GameScreen implements Screen, InputProcessor {
         // draw the HUD
         renderHUD();
 
-        // if round is starting, draw the start around the text
-        if (roundState == RoundState.STARTING) {
-            renderStartRoundText();
+        // if the game is over draw the game over overlay
+        if (gameState == GameState.GAME_OVER) {
+            renderGameOverOverlay();
+        } else {
+            // if round is starting, draw the start around the text
+            if (roundState == RoundState.STARTING) {
+                renderStartRoundText();
+            }
         }
 
         // end drawing
@@ -354,6 +388,57 @@ public class GameScreen implements Screen, InputProcessor {
         );
 
         mediumFont.setColor(DEFAULT_FONT_COLOR);
+    }
+
+    private void renderGameOverOverlay() {
+        // cover game area with a partially transparent black overlay
+        game.batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        game.shapeRenderer.setColor(0, 0, 0, 0.7f);
+        game.shapeRenderer.rect(
+                0, 0,
+                viewport.getWorldWidth(),
+                viewport.getWorldHeight()
+        );
+        game.shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        game.batch.begin();
+
+        // calculate the layout dimensions
+        float textMarginBottom = 2f; // spacing between text and button below it
+        float buttonSpacing = 0.5f; // spacing between buttons
+
+        // calculate the height of the layout
+        float layoutHeight = largeFont.getCapHeight() + textMarginBottom +
+                playAgainButtonSprite.getHeight() + buttonSpacing +
+                mainMenuButtonSprite.getHeight();
+
+        // calculate y position of the layout
+        float layoutPositionY = viewport.getWorldHeight() / 2f - layoutHeight / 2f;
+
+        // draw and set positions of layout bottom up
+        mainMenuButtonSprite.setPosition(
+                viewport.getWorldWidth() / 2f - mainMenuButtonSprite.getWidth() / 2f,
+                layoutPositionY
+        );
+        mainMenuButtonSprite.draw(game.batch);
+        playAgainButtonSprite.setPosition(
+                viewport.getWorldWidth() / 2f - playAgainButtonSprite.getWidth() / 2f,
+                layoutPositionY + mainMenuButtonSprite.getHeight() + buttonSpacing
+        );
+        playAgainButtonSprite.draw(game.batch);
+
+        // draw the text
+        String text = roundsWon > roundsLost ? "YOU WIN!" : "YOU LOSE!";
+        largeFont.draw(
+                game.batch, text,
+                viewport.getWorldWidth() / 2f,
+                playAgainButtonSprite.getY() + playAgainButtonSprite.getHeight() +
+                        textMarginBottom + largeFont.getCapHeight(),
+                0, Align.center, false
+        );
     }
 
     private void update(float deltaTime) {
@@ -566,6 +651,15 @@ public class GameScreen implements Screen, InputProcessor {
             } else if (roundState == RoundState.ENDING) {
                 // if the round is ending and the screen has been touched, skip the round delay
                 roundStateTime = END_ROUND_DELAY;
+            }
+        } else {
+            // if game over and player has clicked our touch play again button
+            if (gameState == GameState.GAME_OVER && playAgainButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
+                // start over from the beginning
+                startGame();
+            } else if (gameState == GameState.GAME_OVER && mainMenuButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
+                // if game over and player has clicked our touch main menu button
+                game.setScreen(game.gameScreen);
             }
         }
 
