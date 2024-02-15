@@ -622,7 +622,14 @@ public class GameScreen implements Screen, InputProcessor {
                 // check if the fighters are attacking
                 if (game.player.isAttackActive()) {
                     // if the fighters are within contact distance and player is actively attacking, opponent hit
-                    game.opponent.getHit(Fighter.HIT_STRENGTH);
+                    // hit damage based of difficulty setting
+                    if (difficulty == GlobalVariables.Difficulty.EASY) {
+                        game.opponent.getHit(Fighter.PLAYER_HIT_STRENGTH_EASY);
+                    } else if (difficulty == GlobalVariables.Difficulty.MEDIUM) {
+                        game.opponent.getHit(Fighter.PLAYER_HIT_STRENGTH_MEDIUM);
+                    } else {
+                        game.opponent.getHit(Fighter.PLAYER_HIT_STRENGTH_HARD);
+                    }
 
                     if (game.opponent.isBlocking()) {
                         // if opponent is blocking, play block sound
@@ -642,7 +649,14 @@ public class GameScreen implements Screen, InputProcessor {
                     }
                 } else if (game.opponent.isAttackActive()) {
                     // if the fighters are within contact distance and opponent is actively attacking, player hit
-                    game.player.getHit(Fighter.HIT_STRENGTH);
+                    // hit damage based of difficulty setting
+                    if (difficulty == GlobalVariables.Difficulty.EASY) {
+                        game.player.getHit(Fighter.OPPONENT_HIT_STRENGTH_EASY);
+                    } else if (difficulty == GlobalVariables.Difficulty.MEDIUM) {
+                        game.player.getHit(Fighter.OPPONENT_HIT_STRENGTH_MEDIUM);
+                    } else {
+                        game.player.getHit(Fighter.OPPONENT_HIT_STRENGTH_HARD);
+                    }
 
                     if (game.player.isBlocking()) {
                         // if player is blocking, play block sound

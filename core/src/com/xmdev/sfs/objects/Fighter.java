@@ -21,8 +21,13 @@ public class Fighter {
     // maximum life a fighter can have
     public static final float MAX_LIFE = 100f;
 
-    // amount of damage a fighter's hit will inflict
-    public static final float HIT_STRENGTH = 5f;
+    // amount of damage an opponent or player's hit will inflict
+    public static final float OPPONENT_HIT_STRENGTH_EASY = 5f;
+    public static final float OPPONENT_HIT_STRENGTH_MEDIUM = 10f;
+    public static final float OPPONENT_HIT_STRENGTH_HARD = 20f;
+    public static final float PLAYER_HIT_STRENGTH_EASY = OPPONENT_HIT_STRENGTH_EASY;
+    public static final float PLAYER_HIT_STRENGTH_MEDIUM = 9f;
+    public static final float PLAYER_HIT_STRENGTH_HARD = 13f;
 
     // factor to decrease damage if a fighter gets hit while blocking
     public static final float BLOCK_DAMAGE_FACTOR = 0.2f;
