@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
+import com.xmdev.sfs.objects.BloodPool;
 import com.xmdev.sfs.objects.BloodSplatter;
 import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
@@ -107,6 +108,9 @@ public class GameScreen implements Screen, InputProcessor {
     private static final int BLOOD_SPLATTER_AMOUNT = 5;
     private static final float BLOOD_SPLATTER_OFFSET_X = 2.8f;
     private static final float BLOOD_SPLATTER_OFFSET_Y = 11f;
+    private BloodPool[] bloodPools;
+    private int currentBloodPoolIndex;
+    private static final int BLOOD_POOL_AMOUNT = 100;
 
     public GameScreen(SFS game) {
         this.game = game;
@@ -202,6 +206,17 @@ public class GameScreen implements Screen, InputProcessor {
         // set the current blood splatter index to the start of the arrays
         currentPlayerBloodSplatterIndex = 0;
         currentOpponentBloodSplatterIndex = 0;
+
+        // initialize the blood pools
+        bloodPools = new BloodPool[BLOOD_POOL_AMOUNT];
+
+        // loop through the array and initialize blood pool objects
+        for (int i = 0; i < BLOOD_POOL_AMOUNT; i++) {
+            bloodPools[i] = new BloodPool(game);
+        }
+
+        // set the current blood pool index to the start of the array
+        currentBloodPoolIndex = 0;
     }
 
     @Override
@@ -305,6 +320,9 @@ public class GameScreen implements Screen, InputProcessor {
                 backgroundTexture.getHeight() * GlobalVariables.WORLD_SCALE
         );
 
+        // draw the blood pools
+        renderBloodPools();
+
         // draw the fighters
         renderFighters();
 
@@ -371,6 +389,15 @@ public class GameScreen implements Screen, InputProcessor {
         if (showingBlood) {
             for (BloodSplatter bloodSplatter : bloodSplatters) {
                 bloodSplatter.render(game.batch);
+            }
+        }
+    }
+
+    private void renderBloodPools() {
+        // check if showing blood, draw all (active) blood pools
+        if (showingBlood) {
+            for (BloodPool bloodPool : bloodPools) {
+                bloodPool.render(game.batch);
             }
         }
     }
@@ -639,6 +666,11 @@ public class GameScreen implements Screen, InputProcessor {
             opponentBloodSplatters[i].update(deltaTime);
         }
 
+        // update the blood pools
+        for (BloodPool bloodPool : bloodPools) {
+            bloodPool.update(deltaTime);
+        }
+
         // make sure fighters are facing each other
         if (game.player.getPosition().x <= game.opponent.getPosition().x) {
             game.player.faceRight();
@@ -773,6 +805,20 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 currentOpponentBloodSplatterIndex = 0;
             }
+        }
+
+        // activate the current blood pool in the array
+        bloodPools[currentBloodPoolIndex].activate(
+                fighter.getPosition().x,
+                fighter.getPosition().y
+        );
+
+        // increment the current blood pool index, or return the the first if the end of the blood pool
+        // array has been reached
+        if (currentBloodPoolIndex < BLOOD_POOL_AMOUNT - 1) {
+            currentBloodPoolIndex++;
+        } else {
+            currentBloodPoolIndex = 0;
         }
     }
 
@@ -1046,7 +1092,7 @@ public class GameScreen implements Screen, InputProcessor {
         } else if (keycode == Input.Keys.N) {
             // toggle music on or off
             game.audioManager.toggleMusic();
-        } else if (keycode == Input.Keys.B) {
+        } else if (keycode == Input.Keys.M) {
             // change the difficulty setting
             switch (difficulty) {
                 case EASY:
@@ -1058,6 +1104,9 @@ public class GameScreen implements Screen, InputProcessor {
                 default:
                     difficulty = GlobalVariables.Difficulty.EASY;
             }
+        } else if (keycode == Input.Keys.B){
+            // toggle blood on or off
+            showingBlood = !showingBlood;
         } else {
             if (roundState == RoundState.IN_PROGRESS) {
                 // check if player has pressed a movement key
