@@ -9,8 +9,9 @@ Stick Figure Showdown is a 2D fighting game featuring stick figure characters. T
 ### Key Features
 - **Engaging Combat Mechanics**: Experience fast-paced and intuitive stick figure fighting gameplay.
 - **Character Animations**: Smooth and dynamic animations bring the stick figure characters to life.
-- **Interactive Environments**: Battle across various stages with interactive elements.
+- **Interactive Environments**: Battle your opponent with interactive elements.
 - **Sound and Music**: Immersive audio experience with sound effects and background music.
+- **Advanced AI Opponents: Challenge yourself against AI opponents that adapt to different difficulty levels.
 
 ## Development Journey
 This project is more than just a game; it's a journey through the world of game development using LibGDX. Each step, from conceptualization to implementation, is an opportunity to learn and apply different facets of the framework.
@@ -20,6 +21,7 @@ This project is more than just a game; it's a journey through the world of game 
 - **Sprite and Animation Handling**: Learning how to effectively use sprites and animate them.
 - **Game Physics and Mechanics**: Implementing basic physics and developing engaging game mechanics.
 - **Audio Integration**: Adding sound effects and music to enhance the gaming experience.
+- **AI Integration: Developing challenging AI opponents for dynamic gameplay.
 - **Optimization and Best Practices**: Ensuring the game runs smoothly and adheres to development best practices.
 
 ## Getting Started
