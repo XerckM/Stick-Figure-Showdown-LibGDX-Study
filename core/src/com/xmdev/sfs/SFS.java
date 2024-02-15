@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
+import com.xmdev.sfs.resources.AudioManager;
 import com.xmdev.sfs.screens.GameScreen;
 
 public class SFS extends Game {
 	public SpriteBatch batch;
 	public ShapeRenderer shapeRenderer;
 	public Assets assets;
+	public AudioManager audioManager;
 
 	// screens
 	public GameScreen gameScreen;
@@ -28,6 +30,10 @@ public class SFS extends Game {
 		// Load all assets
 		assets.load();
 		assets.manager.finishLoading();
+
+		// initialize audio manager
+		audioManager = new AudioManager(assets.manager);
+		audioManager.playMusic();
 
 		// initialize the fighters
 		player = new Fighter(this, "Slim Stallone", new Color(1f, 0.2f, 0.2f, 1f));

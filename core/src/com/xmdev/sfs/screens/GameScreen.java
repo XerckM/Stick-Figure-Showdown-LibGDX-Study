@@ -179,10 +179,18 @@ public class GameScreen implements Screen, InputProcessor {
 
     private void pauseGame() {
         gameState = GameState.PAUSED;
+
+        // pause game sounds and music
+        game.audioManager.pauseGameSounds();
+        game.audioManager.pauseMusic();
     }
 
     private void resumeGame() {
         gameState = GameState.RUNNING;
+
+        // resume game sounds and music (if it's enabled)
+        game.audioManager.resumeGameSounds();
+        game.audioManager.playMusic();
     }
 
     private void startRound() {
@@ -208,6 +216,9 @@ public class GameScreen implements Screen, InputProcessor {
         game.opponent.lose();
         roundsWon++;
 
+        // play cheer sound
+        game.audioManager.playSound(Assets.CHEER_SOUND);
+
         // end the round
         endRound();
     }
@@ -217,6 +228,9 @@ public class GameScreen implements Screen, InputProcessor {
         game.player.lose();
         game.opponent.win();
         roundsLost++;
+
+        // play boo sound
+        game.audioManager.playSound(Assets.BOO_SOUND);
 
         // end the round
         endRound();
@@ -592,6 +606,14 @@ public class GameScreen implements Screen, InputProcessor {
                     // if the fighters are within contact distance and player is actively attacking, opponent hit
                     game.opponent.getHit(Fighter.HIT_STRENGTH);
 
+                    if (game.opponent.isBlocking()) {
+                        // if opponent is blocking, play block sound
+                        game.audioManager.playSound(Assets.BLOCK_SOUND);
+                    } else {
+                        // if opponent is not blocking, play hit sound
+                        game.audioManager.playSound(Assets.HIT_SOUND);
+                    }
+
                     // deactivate player's attack
                     game.player.makeContact();
 
@@ -637,11 +659,15 @@ public class GameScreen implements Screen, InputProcessor {
         if (gameState == GameState.RUNNING) {
             pauseGame();
         }
+
+        // pause music
+        game.audioManager.pauseMusic();
     }
 
     @Override
     public void resume() {
-
+        // resume music (if it's enabled)
+        game.audioManager.playMusic();
     }
 
     @Override
@@ -681,6 +707,9 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 resumeGame();
             }
+        } else if (keycode == Input.Keys.N) {
+            // toggle music on or off
+            game.audioManager.toggleMusic();
         } else {
             if (roundState == RoundState.IN_PROGRESS) {
                 // check if player has pressed a movement key
@@ -753,6 +782,9 @@ public class GameScreen implements Screen, InputProcessor {
             if (pauseButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
                 // if the pause button had been touched, pause the game
                 pauseGame();
+
+                    // play click sound
+                    game.audioManager.playSound(Assets.CLICK_SOUND);
             } else if (roundState == RoundState.STARTING) {
                 // if the round is starting and the screen has been touched, skip the round delay
                 roundStateTime = START_ROUND_DELAY;
@@ -765,9 +797,15 @@ public class GameScreen implements Screen, InputProcessor {
             if (gameState == GameState.GAME_OVER && playAgainButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
                 // start over from the beginning
                 startGame();
+
+                // play click sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
             } else if (gameState == GameState.PAUSED && continueButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
                 // if the game is paused and the continue button has been touched, continue the game
                 resumeGame();
+
+                // play click sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
             }
         }
 
