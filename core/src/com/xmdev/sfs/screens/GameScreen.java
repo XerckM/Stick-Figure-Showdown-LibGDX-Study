@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
+import com.xmdev.sfs.objects.BloodSplatter;
 import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
@@ -97,6 +98,16 @@ public class GameScreen implements Screen, InputProcessor {
     private static final float OPPONENT_AI_PURSUE_PLAYER_CHANCE_MEDIUM = 0.5f;
     private static final float OPPONENT_AI_PURSUE_PLAYER_CHANCE_HARD = 1f;
 
+    // blood
+    private boolean showingBlood = true;
+    private BloodSplatter[] playerBloodSplatters;
+    private BloodSplatter[] opponentBloodSplatters;
+    private int currentPlayerBloodSplatterIndex;
+    private int currentOpponentBloodSplatterIndex;
+    private static final int BLOOD_SPLATTER_AMOUNT = 5;
+    private static final float BLOOD_SPLATTER_OFFSET_X = 2.8f;
+    private static final float BLOOD_SPLATTER_OFFSET_Y = 11f;
+
     public GameScreen(SFS game) {
         this.game = game;
 
@@ -116,6 +127,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         // create buttons
         createButtons();
+
+        // create the blood splatters and pools
+        createBlood();
     }
 
     private void createGameArea() {
@@ -172,6 +186,22 @@ public class GameScreen implements Screen, InputProcessor {
                 pauseButtonSprite.getWidth() * GlobalVariables.WORLD_SCALE,
                 pauseButtonSprite.getHeight() * GlobalVariables.WORLD_SCALE
         );
+    }
+
+    private void createBlood() {
+        // initialize the blood splatters
+        playerBloodSplatters = new BloodSplatter[BLOOD_SPLATTER_AMOUNT];
+        opponentBloodSplatters = new BloodSplatter[BLOOD_SPLATTER_AMOUNT];
+
+        // loop through the arrays and initialize the blood splatter objects
+        for (int i = 0; i < BLOOD_SPLATTER_AMOUNT; i++) {
+            playerBloodSplatters[i] = new BloodSplatter(game);
+            opponentBloodSplatters[i] = new BloodSplatter(game);
+        }
+
+        // set the current blood splatter index to the start of the arrays
+        currentPlayerBloodSplatterIndex = 0;
+        currentOpponentBloodSplatterIndex = 0;
     }
 
     @Override
@@ -316,14 +346,32 @@ public class GameScreen implements Screen, InputProcessor {
             // draw player
             game.player.render(game.batch);
 
+            // draw the player's blood splatter (if enabled)
+            rendeBloodSplatters(playerBloodSplatters);
+
             // draw opponent
             game.opponent.render(game.batch);
+
+            // draw the opponent's blood splatter (if enabled)
+            rendeBloodSplatters(opponentBloodSplatters);
         } else {
             // draw opponent
             game.opponent.render(game.batch);
 
+            // draw the opponent's blood splatter (if enabled)
+            rendeBloodSplatters(opponentBloodSplatters);
+
             // draw player
             game.player.render(game.batch);
+        }
+    }
+
+    private void rendeBloodSplatters(BloodSplatter[] bloodSplatters) {
+        // if showing blood, draw all (active) blood splatters in the given array
+        if (showingBlood) {
+            for (BloodSplatter bloodSplatter : bloodSplatters) {
+                bloodSplatter.render(game.batch);
+            }
         }
     }
 
@@ -585,6 +633,12 @@ public class GameScreen implements Screen, InputProcessor {
         game.player.update(deltaTime);
         game.opponent.update(deltaTime);
 
+        // update the blood splatters
+        for (int i = 0; i < BLOOD_SPLATTER_AMOUNT; i++) {
+            playerBloodSplatters[i].update(deltaTime);
+            opponentBloodSplatters[i].update(deltaTime);
+        }
+
         // make sure fighters are facing each other
         if (game.player.getPosition().x <= game.opponent.getPosition().x) {
             game.player.faceRight();
@@ -637,6 +691,9 @@ public class GameScreen implements Screen, InputProcessor {
                     } else {
                         // if opponent is not blocking, play hit sound
                         game.audioManager.playSound(Assets.HIT_SOUND);
+
+                        // spill some blood
+                        spillBlood(game.opponent);
                     }
 
                     // deactivate player's attack
@@ -664,6 +721,9 @@ public class GameScreen implements Screen, InputProcessor {
                     } else {
                         // if player is not blocking, play hit sound
                         game.audioManager.playSound(Assets.HIT_SOUND);
+
+                        // spill some blood
+                        spillBlood(game.player);
                     }
 
                     // deactivate opponent's attack
@@ -675,6 +735,43 @@ public class GameScreen implements Screen, InputProcessor {
                         loseRound();
                     }
                 }
+            }
+        }
+    }
+
+    private void spillBlood(Fighter fighter) {
+        // use the given fighter to get the current blood splatter array and current index
+        BloodSplatter[] bloodSplatters;
+        int currentBloodSplatterIndex;
+
+        // check which fighter is being used and set blood splatter array and current index accordingly
+        if (fighter.equals(game.player)) {
+            bloodSplatters = playerBloodSplatters;
+            currentBloodSplatterIndex = currentPlayerBloodSplatterIndex;
+        } else {
+            bloodSplatters = opponentBloodSplatters;
+            currentBloodSplatterIndex = currentOpponentBloodSplatterIndex;
+        }
+
+        // activate the current blood splatter in the array
+        bloodSplatters[currentBloodSplatterIndex].activate(
+                fighter.getPosition().x + BLOOD_SPLATTER_OFFSET_X,
+                fighter.getPosition().y + BLOOD_SPLATTER_OFFSET_Y
+        );
+
+        // increment the correct blood splatter index, or return to the first if the end of the array
+        // has been reached
+        if (fighter.equals(game.player)) {
+            if (currentPlayerBloodSplatterIndex < BLOOD_SPLATTER_AMOUNT - 1) {
+                currentPlayerBloodSplatterIndex++;
+            } else {
+                currentPlayerBloodSplatterIndex = 0;
+            }
+        } else {
+            if (currentOpponentBloodSplatterIndex < BLOOD_SPLATTER_AMOUNT - 1) {
+                currentOpponentBloodSplatterIndex++;
+            } else {
+                currentOpponentBloodSplatterIndex = 0;
             }
         }
     }
