@@ -48,6 +48,11 @@ public class BloodPool {
         position.set(positionX, positionY);
     }
 
+    public void deactivate() {
+        // deactivate the blood pool
+        active = false;
+    }
+
     public void update(float deltaTime) {
         // if not active, don't update
         if (!active) return;
