@@ -1,9 +1,13 @@
 package com.xmdev.sfs.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -20,6 +24,7 @@ public class MainMenuScreen implements Screen {
     private final SFS game;
     private final Stage stage;
     private final TextureAtlas menuItemsAtlas;
+    private Texture backgroundTexture;
 
     // image widgets
     private Image logoImage;
@@ -49,6 +54,9 @@ public class MainMenuScreen implements Screen {
                 GlobalVariables.WORLD_WIDTH, 0, stage.getCamera()
         ));
 
+        // set background image
+        createBackground();
+
         // get the menu items texture atlas from the asset manager
         menuItemsAtlas = game.assets.manager.get(Assets.MENU_ITEMS_ATLAS);
 
@@ -59,6 +67,11 @@ public class MainMenuScreen implements Screen {
 
         // create the tables
         createTables();
+    }
+
+    private void createBackground() {
+        // set the background color
+        backgroundTexture = game.assets.manager.get(Assets.BACKGROUND_TEXTURE);
     }
 
     private void createImages() {
@@ -158,7 +171,7 @@ public class MainMenuScreen implements Screen {
 
     private void createTables() {
         // remove line later
-        stage.setDebugAll(true);
+//        stage.setDebugAll(true);
 
         // create the main table and add it to the stage
         Table mainTable = new Table();
@@ -166,13 +179,24 @@ public class MainMenuScreen implements Screen {
         mainTable.setRound(false);
         stage.addActor(mainTable);
 
+        // Add the logo to the main table, spanning across two columns
+        mainTable.add(logoImage).size(logoImage.getWidth(), logoImage.getHeight()).colspan(2).center().padBottom(2);
+        mainTable.row();
+
         // create the left side table
         Table leftSideTable = new Table();
         leftSideTable.setRound(false);
 
-        // add the logo to the left side table
-        leftSideTable.add(logoImage).size(logoImage.getWidth(), logoImage.getHeight());
-        leftSideTable.row().padTop(1.5f);
+        // Adjust the size of the fighter display background and image to make it bigger
+        float scaleMultiplier = 1.2f; // Adjust this multiplier to scale the size
+        fighterDisplayBackgroundImage.setSize(
+                fighterDisplayBackgroundImage.getWidth() * scaleMultiplier,
+                fighterDisplayBackgroundImage.getHeight() * scaleMultiplier
+        );
+        fighterDisplayImage.setSize(
+                fighterDisplayImage.getWidth() * scaleMultiplier,
+                fighterDisplayImage.getHeight() * scaleMultiplier
+        );
 
         // create the fighter display table and set its background to the fighter display background image
         Table fighterDisplayTable = new Table();
@@ -229,6 +253,21 @@ public class MainMenuScreen implements Screen {
         Table rightSideTable = new Table();
         rightSideTable.setRound(false);
 
+        // Adjust the size of the buttons to make them smaller
+        float buttonScale = 0.85f; // Adjust this scale to resize buttons
+        playGameButton.setSize(
+                playGameButton.getWidth() * buttonScale,
+                playGameButton.getHeight() * buttonScale
+        );
+        settingsButton.setSize(
+                settingsButton.getWidth() * buttonScale,
+                settingsButton.getHeight() * buttonScale
+        );
+        quitGameButton.setSize(
+                quitGameButton.getWidth() * buttonScale,
+                quitGameButton.getHeight() * buttonScale
+        );
+
         // add the play game, settings, and quit game buttons to the right side table
         rightSideTable.add(playGameButton).size(
                 playGameButton.getWidth(),
@@ -251,6 +290,9 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        // set the stage as the input processor
+        Gdx.input.setInputProcessor(stage);
+
         // set the fighter display name label's text to the name of the player's fighter
         fighterDisplayNameLabel.setText(game.player.getName().toUpperCase());
 
@@ -260,12 +302,45 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(GlobalVariables.BLUE_BACKGROUND);
+        // draw the background
+        game.batch.begin();
+
+        // set the sprite batch and the shape renderer to use the viewport camera
+        game.batch.setProjectionMatrix(stage.getCamera().combined);
+        game.shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
+
+        // set the sprite batch to use the camera
+        game.batch.setProjectionMatrix(stage.getCamera().combined);
+
+        game.batch.draw(
+                backgroundTexture, 0, 0,
+                backgroundTexture.getWidth() * GlobalVariables.WORLD_SCALE,
+                backgroundTexture.getHeight() * GlobalVariables.WORLD_SCALE
+        );
+
+        game.batch.end();
+
+        // cover the background with a semi-transparent black color
+        game.batch.begin();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        game.shapeRenderer.setColor(0, 0, 0, 0.4f);
+        game.shapeRenderer.rect(
+                0, 0,
+                stage.getWidth(),
+                stage.getHeight()
+        );
+        game.shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+        game.batch.end();
 
         // tell the stage to do actions and draw itself
         stage.act(delta);
         stage.draw();
     }
+
+
 
     @Override
     public void resize(int width, int height) {
