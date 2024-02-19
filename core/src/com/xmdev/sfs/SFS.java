@@ -8,6 +8,7 @@ import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.AudioManager;
 import com.xmdev.sfs.screens.GameScreen;
+import com.xmdev.sfs.screens.MainMenuScreen;
 
 public class SFS extends Game {
 	public SpriteBatch batch;
@@ -17,6 +18,7 @@ public class SFS extends Game {
 
 	// screens
 	public GameScreen gameScreen;
+	public MainMenuScreen mainMenuScreen;
 
 	// fighters
 	public Fighter player, opponent;
@@ -39,9 +41,12 @@ public class SFS extends Game {
 		player = new Fighter(this, "Slim Stallone", new Color(1f, 0.2f, 0.2f, 1f));
 		opponent = new Fighter(this, "Fat Stallone", new Color(0.25f, 0.7f, 1f, 1f));
 
-		// initialize game screen and switch to it
+		// initialize game screen
 		gameScreen = new GameScreen(this);
-		setScreen(gameScreen);
+
+		// initialize main menu screen and switch to it
+		mainMenuScreen = new MainMenuScreen(this);
+		setScreen(mainMenuScreen);
 	}
 
 	@Override
