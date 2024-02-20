@@ -2,7 +2,6 @@ package com.xmdev.sfs;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Json;
@@ -12,6 +11,7 @@ import com.xmdev.sfs.objects.Fighter;
 import com.xmdev.sfs.objects.FighterChoice;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.AudioManager;
+import com.xmdev.sfs.resources.SettingsManager;
 import com.xmdev.sfs.screens.GameScreen;
 import com.xmdev.sfs.screens.MainMenuScreen;
 
@@ -22,6 +22,7 @@ public class SFS extends Game {
 	public ShapeRenderer shapeRenderer;
 	public Assets assets;
 	public AudioManager audioManager;
+	public SettingsManager settingsManager;
 
 	// screens
 	public GameScreen gameScreen;
@@ -41,9 +42,30 @@ public class SFS extends Game {
 		assets.load();
 		assets.manager.finishLoading();
 
+		// initialize the settings manager and load all the settings
+		settingsManager = new SettingsManager();
+		settingsManager.loadSettings();
+
 		// initialize audio manager
 		audioManager = new AudioManager(assets.manager);
-		audioManager.playMusic();
+
+		// update the audio settings in the audio manager
+		if (settingsManager.isMusicSettingOn()) {
+			audioManager.enableMusic();
+		} else {
+			audioManager.disableMusic();
+		}
+
+		if (settingsManager.isSoundsSettingOn()) {
+			audioManager.enableSounds();
+		} else {
+			audioManager.disableSounds();
+		}
+
+		// if the full screen setting is on, set the game to full screen
+		if (settingsManager.isFullScreenSettingOn()) {
+			Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		}
 
 		// load the fighter choice list
 		loadFighterChoiceList();
