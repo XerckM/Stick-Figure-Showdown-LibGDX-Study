@@ -1203,6 +1203,32 @@ public class GameScreen implements Screen, InputProcessor {
 
                 // play click sound
                 game.audioManager.playSound(Assets.CLICK_SOUND);
+            } else if (mainMenuButtonSprite.getBoundingRectangle().contains(position.x, position.y)) {
+                // play click sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // stop all game sounds
+                game.audioManager.stopGameSounds();
+
+                // resume music if the game is paused
+                if (gameState == GameState.PAUSED) {
+                    game.audioManager.playMusic();
+                }
+
+                // deactivate all the blood splatters
+                for (int i = 0; i < BLOOD_SPLATTER_AMOUNT; i++) {
+                    playerBloodSplatters[i].deactivate();
+                    opponentBloodSplatters[i].deactivate();
+                }
+
+                // deactivate all the blood pools
+                for (BloodPool bloodPool : bloodPools) {
+                    bloodPool.deactivate();
+                }
+
+                // switch to the main menu screen
+                game.setScreen(new MainMenuScreen(game));
+
             }
         }
 

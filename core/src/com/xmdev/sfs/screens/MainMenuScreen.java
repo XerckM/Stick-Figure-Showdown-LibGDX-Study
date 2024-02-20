@@ -8,15 +8,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
+import com.xmdev.sfs.objects.FighterChoice;
 import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.GlobalVariables;
 
@@ -152,6 +155,106 @@ public class MainMenuScreen implements Screen {
                 nextFighterButton.getWidth() * GlobalVariables.WORLD_SCALE,
                 nextFighterButton.getHeight() * GlobalVariables.WORLD_SCALE
         );
+
+        // add the button listeners
+        addButtonListeners();
+    }
+
+    private void addButtonListeners() {
+        // add the play game button listener
+        playGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clcik sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // choose a random opponent fighter from the fighter choice list, making sure it's different from
+                // player's chosen fighter
+                int index = MathUtils.random(game.fighterChoiceList.size() - 1);
+                FighterChoice fighterChoice = game.fighterChoiceList.get(index);
+                while (fighterChoice.getName().equals(game.player.getName())) {
+                    index = MathUtils.random(game.fighterChoiceList.size() - 1);
+                    fighterChoice = game.fighterChoiceList.get(index);
+                }
+                game.opponent.setName(fighterChoice.getName());
+                game.opponent.setColor(fighterChoice.getColor());
+
+                // switch to the game screen
+                game.setScreen(game.gameScreen);
+            }
+        });
+
+        // add the settings button listener
+        settingsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clcik sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // switch to the settings screen
+
+            }
+        });
+
+        // add the quit game button listener
+        quitGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clcik sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // exit the game
+                Gdx.app.exit();
+            }
+        });
+
+        // add the previous fighter button listener
+        previousFighterButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clcik sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // choose the previous fighter in the fighter choice list, or choose the last fighter if the
+                // beginning of the list is reached
+                if (currentFighterChoiceIndex > 0) {
+                    currentFighterChoiceIndex--;
+                } else {
+                    currentFighterChoiceIndex = game.fighterChoiceList.size() - 1;
+                }
+
+                // set the name and color of player's fighter and the fighter display to those of the chosen fighter
+                FighterChoice fighterChoice = game.fighterChoiceList.get(currentFighterChoiceIndex);
+                game.player.setName(fighterChoice.getName());
+                game.player.setColor(fighterChoice.getColor());
+                fighterDisplayImage.setColor(fighterChoice.getColor());
+                fighterDisplayNameLabel.setText(fighterChoice.getName().toUpperCase());
+            }
+        });
+
+        // add the next fighter button listener
+        nextFighterButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clcik sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // choose the next fighter in the fighter choice list, or choose the first fighter if the
+                // end of the list is reached
+                if (currentFighterChoiceIndex < game.fighterChoiceList.size() - 1) {
+                    currentFighterChoiceIndex++;
+                } else {
+                    currentFighterChoiceIndex = 0;
+                }
+
+                // set the name and color of player's fighter and the fighter display to those of the chosen fighter
+                FighterChoice fighterChoice = game.fighterChoiceList.get(currentFighterChoiceIndex);
+                game.player.setName(fighterChoice.getName());
+                game.player.setColor(fighterChoice.getColor());
+                fighterDisplayImage.setColor(fighterChoice.getColor());
+                fighterDisplayNameLabel.setText(fighterChoice.getName().toUpperCase());
+            }
+        });
     }
 
     private void createLabels() {
@@ -170,7 +273,7 @@ public class MainMenuScreen implements Screen {
     }
 
     private void createTables() {
-        // remove line later
+        // show lines for debugging positioning of widgets
 //        stage.setDebugAll(true);
 
         // create the main table and add it to the stage
@@ -298,6 +401,15 @@ public class MainMenuScreen implements Screen {
 
         // set the fighter display image's color to the color of the player's fighter
         fighterDisplayImage.setColor(game.player.getColor());
+
+        // find the index of player's currently chosen fighter in the fighter choice list
+        currentFighterChoiceIndex = 0;
+        for (int i = 0; i < game.fighterChoiceList.size(); i++) {
+            if (game.fighterChoiceList.get(i).getName().equals(game.player.getName())) {
+                currentFighterChoiceIndex = i;
+                break;
+            }
+        }
     }
 
     @Override
@@ -350,12 +462,14 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void pause() {
-
+        // pause music
+        game.audioManager.pauseMusic();
     }
 
     @Override
     public void resume() {
-
+        // resume music (if it's enabled)
+        game.audioManager.playMusic();
     }
 
     @Override
