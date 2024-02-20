@@ -13,6 +13,7 @@ import com.xmdev.sfs.resources.Assets;
 import com.xmdev.sfs.resources.AudioManager;
 import com.xmdev.sfs.resources.SettingsManager;
 import com.xmdev.sfs.screens.GameScreen;
+import com.xmdev.sfs.screens.LoadingScreen;
 import com.xmdev.sfs.screens.MainMenuScreen;
 import com.xmdev.sfs.screens.SettingsScreen;
 
@@ -29,6 +30,7 @@ public class SFS extends Game {
 	public GameScreen gameScreen;
 	public MainMenuScreen mainMenuScreen;
 	public SettingsScreen settingsScreen;
+	public LoadingScreen loadingScreen;
 
 	// fighters
 	public Fighter player, opponent;
@@ -40,10 +42,12 @@ public class SFS extends Game {
 		shapeRenderer = new ShapeRenderer();
 		assets = new Assets();
 
-		// Load all assets
-		assets.load();
-		assets.manager.finishLoading();
+		// initialize the loading screen and switch to it
+		loadingScreen = new LoadingScreen(this);
+		setScreen(loadingScreen);
+	}
 
+	public void assetsLoaded() {
 		// initialize the settings manager and load all the settings
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
