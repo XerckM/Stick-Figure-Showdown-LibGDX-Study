@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.xmdev.sfs.SFS;
@@ -204,6 +206,156 @@ public class SettingsScreen implements Screen {
                 bloodCheckButton.getWidth() * GlobalVariables.WORLD_SCALE,
                 bloodCheckButton.getHeight() * GlobalVariables.WORLD_SCALE
         );
+
+        // add the button listeners
+        addButtonListeners();
+    }
+
+    private void addButtonListeners() {
+        // add the back button listener
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // switch to the main menu screen
+                game.setScreen(game.mainMenuScreen);
+            }
+        });
+
+        // add the music toggle button listener
+        musicToggleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // toggle the music setting based on the button's checked state
+                game.settingsManager.toggleMusicSetting(musicToggleButton.isChecked());
+
+                // if the music setting is on, enable the music; otherwise disable it
+                if (game.settingsManager.isMusicSettingOn()) {
+                    game.audioManager.enableMusic();
+                } else {
+                    game.audioManager.disableMusic();
+                }
+            }
+        });
+
+        // add the sounds toggle button listener
+        soundsToggleButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // toggle the sounds setting based on the button's checked state
+                game.settingsManager.toggleSoundsSetting(soundsToggleButton.isChecked());
+
+                // if the sounds setting is on, enable the sounds; otherwise disable them
+                if (game.settingsManager.isSoundsSettingOn()) {
+                    game.audioManager.enableSounds();
+                } else {
+                    game.audioManager.disableSounds();
+                }
+            }
+        });
+
+        // add the previous difficulty button listener
+        previousDifficultyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // set the previous difficulty setting, or go to hard if currently on easy;
+                // also make the corresponding difficulty image visible and other's invisible
+                switch (game.settingsManager.getDifficultySetting()) {
+                    case EASY:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.HARD);
+                        easyImage.setVisible(false);
+                        mediumImage.setVisible(false);
+                        hardImage.setVisible(true);
+                        break;
+                    case MEDIUM:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.EASY);
+                        easyImage.setVisible(true);
+                        mediumImage.setVisible(false);
+                        hardImage.setVisible(false);
+                        break;
+                    default:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.MEDIUM);
+                        easyImage.setVisible(false);
+                        mediumImage.setVisible(true);
+                        hardImage.setVisible(false);
+                }
+            }
+        });
+
+        // add the next difficulty button listener
+        nextDifficultyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // set the next difficulty setting, or go to easy if currently on hard;
+                // also make the corresponding difficulty image visible and other's invisible
+                switch (game.settingsManager.getDifficultySetting()) {
+                    case EASY:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.MEDIUM);
+                        easyImage.setVisible(false);
+                        mediumImage.setVisible(true);
+                        hardImage.setVisible(false);
+                        break;
+                    case MEDIUM:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.HARD);
+                        easyImage.setVisible(false);
+                        mediumImage.setVisible(false);
+                        hardImage.setVisible(true);
+                        break;
+                    default:
+                        game.settingsManager.setDifficultySetting(GlobalVariables.Difficulty.EASY);
+                        easyImage.setVisible(true);
+                        mediumImage.setVisible(false);
+                        hardImage.setVisible(false);
+                }
+            }
+        });
+
+        // add the full screen check button listener
+        fullScreenCheckButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // toggle the full screen setting based on the button's checked state
+                game.settingsManager.toggleFullScreenSetting(fullScreenCheckButton.isChecked());
+
+                // if the full screen setting is on, set the game to full screen; otherwise set it to windowed
+                if (game.settingsManager.isFullScreenSettingOn()) {
+                    Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                } else {
+                    Gdx.graphics.setWindowedMode(
+                            GlobalVariables.WINDOW_WIDTH, GlobalVariables.WINDOW_HEIGHT
+                    );
+                }
+            }
+        });
+
+        // add the blood check button listener
+        bloodCheckButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // play clicked sound
+                game.audioManager.playSound(Assets.CLICK_SOUND);
+
+                // toggle the blood setting based on the button's checked state
+                game.settingsManager.toggleBloodSetting(bloodCheckButton.isChecked());
+            }
+        });
     }
 
     private void createTables() {
@@ -362,7 +514,39 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void show() {
+        // set the stage as the input processor
+        Gdx.input.setInputProcessor(stage);
 
+        // set the settings widgets to show the current settings
+        if (game.settingsManager.isMusicSettingOn()) {
+            musicToggleButton.setChecked(true);
+        }
+
+        if (game.settingsManager.isSoundsSettingOn()) {
+            soundsToggleButton.setChecked(true);
+        }
+
+        switch (game.settingsManager.getDifficultySetting()) {
+            case EASY:
+                mediumImage.setVisible(false);
+                hardImage.setVisible(false);
+                break;
+            case MEDIUM:
+                easyImage.setVisible(false);
+                hardImage.setVisible(false);
+                break;
+            default:
+                easyImage.setVisible(false);
+                mediumImage.setVisible(false);
+        }
+
+        if (game.settingsManager.isFullScreenSettingOn()) {
+            fullScreenCheckButton.setChecked(true);
+        }
+
+        if (game.settingsManager.isBloodSettingOn()) {
+            bloodCheckButton.setChecked(true);
+        }
     }
 
     @Override
