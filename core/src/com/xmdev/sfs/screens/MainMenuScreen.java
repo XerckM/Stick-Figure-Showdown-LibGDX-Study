@@ -192,7 +192,7 @@ public class MainMenuScreen implements Screen {
                 game.audioManager.playSound(Assets.CLICK_SOUND);
 
                 // switch to the settings screen
-
+                game.setScreen(game.settingsScreen);
             }
         });
 
@@ -451,8 +451,6 @@ public class MainMenuScreen implements Screen {
         stage.act(delta);
         stage.draw();
     }
-
-
 
     @Override
     public void resize(int width, int height) {
