@@ -39,4 +39,4 @@ This project is licensed under the MIT License.
 
 ## Acknowledgements
 - [LibGDX](https://libgdx.com/) - The powerful game development framework that makes this project possible.
-- LibGDX Instructor - [Brandon Grant]
+- LibGDX Instructor Credit - Brandon Grant
