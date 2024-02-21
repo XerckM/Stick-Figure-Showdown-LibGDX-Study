@@ -28,7 +28,7 @@ This project is more than just a game; it's a journey through the world of game 
 To get started with the Stick Figure Showdown project, clone this repository and import it into your preferred IDE that supports LibGDX (e.g., IntelliJ IDEA, Eclipse). Ensure you have the required version of Java and LibGDX installed.
 
 ```bash
-git clone https://github.com/XerckM/LibGDX-Study.git
+git clone https://github.com/XerckM/Stick-Figure-Showdown-LibGDX-Study.git
 ```
 
 ## Contributing
@@ -38,5 +38,5 @@ Contributions to the Stick Figure Showdown project are welcome! Whether it's add
 This project is licensed under the MIT License.
 
 ## Acknowledgements
-- [LibGDX](https://libgdx.com/) - The powerful game development framework that makes this project possible.
+- LibGDX - The powerful game development framework that makes this project possible.
 - LibGDX Instructor Credit - Brandon Grant
